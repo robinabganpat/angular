@@ -26,9 +26,12 @@ export default class DynamicComponent {
 
     ngOnInit() {
         this.createShells();
+
+        //console.log(this.resolver['_factories'].keys());
     }
 
     onComboChanged() {
+        console.log(this.componentCombo.inputs);
         this.addComponentToContainer(this.dynamicComponentContainer, this.componentCombo.component, this.componentCombo.inputs, 19, this.currentComponents);
     }
 
@@ -43,11 +46,13 @@ export default class DynamicComponent {
         });
         console.log(this.currentComponents);
 
-        let first: ComponentRef<HelloWorldComponent> = this.currentComponents.find((x: any) => x.instance.id === 1);
+        //let first: ComponentRef<HelloWorldComponent> = this.currentComponents.find((x: any) => x.instance.id === 1);
 
-        console.log(first);
-        this.currentComponents.find((x: any) => x.instance.id === 0).instance.graphName = "hello goodbye";
-        first.instance.balbal = "change text ayy";
+        //console.log(first);
+
+
+        //this.currentComponents.find((x: any) => x.instance.id === 0).instance.graphName = "hello goodbye";
+        //first.instance.balbal = "change text ayy";
     }
 
     changeOrder(vcRef: ViewContainerRef) {
@@ -77,9 +82,15 @@ export default class DynamicComponent {
         // We create the component using the factory and the injector
         let component = factory.create(injector);
         component.instance.id = uid;
+
+
         //(<BaseComponent>component.instance).id = uid;
-        console.log(component.location);
-        console.log(component.instance);
+
+
+        // console.log(component.location);
+        // console.log(component.instance);
+
+
         // // We insert the component into the dom container
         vcRef.insert(component.hostView);
 
@@ -89,22 +100,25 @@ export default class DynamicComponent {
 
         //We should contain a list of all the current shown components.
         //Using the ComponentRef, we have access to the DOM element, ViewRef and instance.
-        //This allows us to do modificiations on a shown component, on-runtime.
+        //This allows us to do modifications on a shown component, on-runtime.
 
         this.renderer.setElementStyle(component.location.nativeElement, 'color', 'orange');
         this.renderer.setElementClass(component.location.nativeElement, 'testClass-' + uid, true);
+
         // component.location.nativeElement.style.backgroundColor = 'yellow';
-        console.log(component.location.nativeElement.offsetTop);
+
+        //console.log(component.location.nativeElement.offsetTop);
     }
 
     DestroyApps() {
-        this.currentComponents.forEach(comp => {
-            comp.destroy();
-        })
+        // Removes the components from the list of active components.
+        this.currentComponents = new Array();
+
+        // Removes the components from the view.
+        this.dynamicComponentContainer.clear()        
     }
 
     RefreshApps() {
-        this.dynamicComponentContainer.clear();
         this.createShells();
     }
 
@@ -112,7 +126,19 @@ export default class DynamicComponent {
         this.changeOrder(this.dynamicComponentContainer);
     }
 
+    ListElements() {
+        console.log("currentComponents values:");
+        this.currentComponents.forEach(component => {
+            console.log(component);
+        })
+
+        console.log("dynamicComponentContainer values:");
+        for (var index = 0; index < this.dynamicComponentContainer.length; index++) {
+            console.log(this.dynamicComponentContainer.get(index));
+        }
+    }
+
     constructor(private resolver: ComponentFactoryResolver, public renderer: Renderer) {
-        // this.renderer = renderer;
-     }
+
+    }
 }

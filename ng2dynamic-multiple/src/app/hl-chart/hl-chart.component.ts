@@ -17,8 +17,8 @@ export default class HlChartComponent extends BaseComponent {
   graphName: string;
 
   onChange(): void {
-    this.options['title'].text = this.graphName;
-    console.log(this.graphName);
+    //this.options['title'].text = this.graphName;
+    //console.log(this.graphName);
   }
 
   constructor(private injector: Injector) {
