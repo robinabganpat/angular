@@ -1,0 +1,6 @@
+<h2>HL-Chart</h2>
+<input [(ngModel)]="graphName" (click)="onChange()" placeholder="GraphName" />
+
+<p>Graphname: {{graphName}}</p>
+
+<chart [options]="options"></chart>
