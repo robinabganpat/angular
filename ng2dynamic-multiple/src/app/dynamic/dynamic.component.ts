@@ -111,7 +111,7 @@ export default class DynamicComponent {
     }
 
     DestroyApps() {
-        // Removes the components from the list of active components.
+        // Removes the components from the local list of components that are displayed.
         this.currentComponents = new Array();
 
         // Removes the components from the view.
