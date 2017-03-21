@@ -2,6 +2,9 @@ import { Component, Input, ViewContainerRef, ViewChild, ReflectiveInjector, Comp
 import HelloWorldComponent from 'app/hello-world/hello-world.component';
 import HlChartComponent from 'app/hl-chart/hl-chart.component';
 import { BaseComponent } from "models/BaseComponent";
+import { ContentService } from "services/content.service";
+import { ContentDto } from "models/ContentDto";
+import { Observable } from "rxjs/Observable";
 
 @Component({
     selector: 'dynamic-component',
@@ -10,11 +13,16 @@ import { BaseComponent } from "models/BaseComponent";
         HlChartComponent
     ], // Reference to the components must be here in order to dynamically create them
     templateUrl: './dynamic.component.html',
-    styleUrls: ['./dynamic.component.css']
+    styleUrls: ['./dynamic.component.css'],
+    providers: [ContentService]
 })
 export default class DynamicComponent {
     currentComponents = new Array();
     componentCombo;
+
+    serverContents: ContentDto[];
+
+    stringy: string;
     // private renderer: Renderer;
 
     //ViewChild works with # of element...
@@ -24,7 +32,17 @@ export default class DynamicComponent {
     // See app.component.html => the [apps] param is retrieved here
     @Input() apps;
 
+    constructor(private resolver: ComponentFactoryResolver, public renderer: Renderer, private ContentService: ContentService) { }
+
     ngOnInit() {
+
+        this.ContentService.getContents().subscribe(result => console.log(result));
+
+        console.log("Servercontents");
+        console.log(this.serverContents);
+
+        this.ContentService.getSimpleString().subscribe(result => console.log(result));    
+
         this.createShells();
 
         //console.log(this.resolver['_factories'].keys());
@@ -115,7 +133,7 @@ export default class DynamicComponent {
         this.currentComponents = new Array();
 
         // Removes the components from the view.
-        this.dynamicComponentContainer.clear()        
+        this.dynamicComponentContainer.clear()
     }
 
     RefreshApps() {
@@ -136,9 +154,5 @@ export default class DynamicComponent {
         for (var index = 0; index < this.dynamicComponentContainer.length; index++) {
             console.log(this.dynamicComponentContainer.get(index));
         }
-    }
-
-    constructor(private resolver: ComponentFactoryResolver, public renderer: Renderer) {
-
     }
 }
