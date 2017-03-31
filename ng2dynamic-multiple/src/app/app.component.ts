@@ -1,6 +1,4 @@
 import { Component, AfterViewChecked } from '@angular/core';
-import HelloWorldComponent from './hello-world/hello-world.component';
-import HlChartComponent from './hl-chart/hl-chart.component';
 
 @Component({
     selector: 'app-root',

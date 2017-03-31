@@ -1,20 +1,23 @@
 import { Component, Input, ViewContainerRef, ViewChild, ReflectiveInjector, ComponentFactoryResolver, Type, ViewRef, ComponentRef, Renderer } from '@angular/core';
-import HelloWorldComponent from 'app/hello-world/hello-world.component';
-import HlChartComponent from 'app/hl-chart/hl-chart.component';
 import { BaseComponent } from "models/BaseComponent";
+import { DynamicService } from "app/dynamic/dynamic.service"
+import { testModule } from "app/dynamic/test.module";
+
+let componentsToLoad = DynamicService.getEntryComponents()
 
 @Component({
+    
     selector: 'dynamic-component',
-    entryComponents: [
-        HelloWorldComponent,
-        HlChartComponent
-    ], // Reference to the components must be here in order to dynamically create them
+    entryComponents: testModule.withComponents([]),
+    // entryComponents: [
+    // ], // Reference to the components must be here in order to dynamically create them
     templateUrl: './dynamic.component.html',
     styleUrls: ['./dynamic.component.css']
 })
 export default class DynamicComponent {
     currentComponents = new Array();
     componentCombo;
+
     // private renderer: Renderer;
 
     //ViewChild works with # of element...
@@ -43,11 +46,11 @@ export default class DynamicComponent {
         });
         console.log(this.currentComponents);
 
-        let first: ComponentRef<HelloWorldComponent> = this.currentComponents.find((x: any) => x.instance.id === 1);
+        // let first: ComponentRef<HelloWorldComponent> = this.currentComponents.find((x: any) => x.instance.id === 1);
 
-        console.log(first);
-        this.currentComponents.find((x: any) => x.instance.id === 0).instance.graphName = "hello goodbye";
-        first.instance.balbal = "change text ayy";
+        // console.log(first);
+        // this.currentComponents.find((x: any) => x.instance.id === 0).instance.graphName = "hello goodbye";
+        // first.instance.balbal = "change text ayy";
     }
 
     changeOrder(vcRef: ViewContainerRef) {
@@ -90,7 +93,7 @@ export default class DynamicComponent {
         //We should contain a list of all the current shown components.
         //Using the ComponentRef, we have access to the DOM element, ViewRef and instance.
         //This allows us to do modificiations on a shown component, on-runtime.
-
+        this.renderer.setElementAttribute(component.location.nativeElement, "id", "app-instance-" + uid);
         this.renderer.setElementStyle(component.location.nativeElement, 'color', 'orange');
         this.renderer.setElementClass(component.location.nativeElement, 'testClass-' + uid, true);
         // component.location.nativeElement.style.backgroundColor = 'yellow';
@@ -104,15 +107,16 @@ export default class DynamicComponent {
     }
 
     RefreshApps() {
-        this.dynamicComponentContainer.clear();
-        this.createShells();
+        console.log(this.currentComponents);
+        this.currentComponents[0].destroy();
     }
 
     ChangeOrder2() {
         this.changeOrder(this.dynamicComponentContainer);
     }
 
-    constructor(private resolver: ComponentFactoryResolver, public renderer: Renderer) {
+    constructor(private resolver: ComponentFactoryResolver, private dynamicService: DynamicService, public renderer: Renderer) {
         // this.renderer = renderer;
+        this.dynamicService = dynamicService;
      }
 }
