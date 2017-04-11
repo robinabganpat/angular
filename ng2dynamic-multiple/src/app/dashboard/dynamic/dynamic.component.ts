@@ -1,10 +1,14 @@
 import { Component, Input, ViewContainerRef, ViewChild, ReflectiveInjector, ComponentFactoryResolver, Type, ViewRef, ComponentRef, Renderer } from '@angular/core';
-import HelloWorldComponent from 'app/hello-world/hello-world.component';
-import HlChartComponent from 'app/hl-chart/hl-chart.component';
-import { BaseComponent } from "models/BaseComponent";
-import { ContentService } from "services/content.service";
-import { ContentDto } from "models/ContentDto";
 import { Observable } from "rxjs/Observable";
+
+import { ContentDto } from "models/ContentDto";
+import { ApplicationDto } from "models/ApplicationDto";
+
+import { BaseComponent } from "models/BaseComponent";
+import { HelloWorldComponent } from 'app/dashboard/hello-world/hello-world.component';
+import { HlChartComponent } from 'app/dashboard/hl-chart/hl-chart.component';
+import { ContentService } from "services/content.service";
+import { ApplicationService } from "services/application.service";
 
 @Component({
     selector: 'dynamic-component',
@@ -14,63 +18,76 @@ import { Observable } from "rxjs/Observable";
     ], // Reference to the components must be here in order to dynamically create them
     templateUrl: './dynamic.component.html',
     styleUrls: ['./dynamic.component.css'],
-    providers: [ContentService]
 })
-export default class DynamicComponent {
+export class DynamicComponent {
     currentComponents = new Array();
     componentCombo;
 
-    serverContents: ContentDto[];
+    contentList: ContentDto[];
+    applicationList: ApplicationDto[];
 
-    stringy: string;
+    errorMessage = "";
     // private renderer: Renderer;
-
-    //ViewChild works with # of element...
+    
+    // Multiple instances of DynamicComponent work! the unique Id is not a problem.
     @ViewChild('dynamicComponentContainer', { read: ViewContainerRef })
     dynamicComponentContainer: ViewContainerRef;
 
     // See app.component.html => the [apps] param is retrieved here
-    @Input() apps;
+    @Input() userId;
 
-    constructor(private resolver: ComponentFactoryResolver, public renderer: Renderer, private ContentService: ContentService) { }
+    constructor(
+        private resolver: ComponentFactoryResolver,
+        public renderer: Renderer,
+        private ContentService: ContentService,
+        private ApplicationService: ApplicationService
+    ) { }
 
     ngOnInit() {
+        // Fetch a list of possible components.
+        this.ApplicationService.getApplications().subscribe(result => {
 
-        this.ContentService.getContents().subscribe(result => console.log(result));
+            this.applicationList = result;
+            console.log("Get Applications SUCCESS");
 
-        console.log("Servercontents");
-        console.log(this.serverContents);
+            //RESOLVE: call when these two requests return successfully.
+            this.createShells();
+        }, err => this.errorMessage = <any>err);
 
-        this.ContentService.getSimpleString().subscribe(result => console.log(result));    
+        // Fetch a list of contents.
+        this.ContentService.getContents(this.userId).subscribe(result => {
 
-        this.createShells();
+            this.contentList = result;
+            console.log("Get Contents SUCCESS");
 
-        //console.log(this.resolver['_factories'].keys());
+            //RESOLVE: call when these two requests return successfully.
+            this.createShells();
+        }, err => this.errorMessage = <any>err);
+    }
+
+    createShells() {
+        console.log("Creating components...");
+        if (this.applicationList == undefined || this.contentList == undefined) {
+            console.log("One request has not returned yet.")
+            return;
+        }
+
+        if (this.contentList.length == 0) {
+            this.errorMessage = "There are no contents to display";
+            return;
+        }
+
+        let index: number = 0;
+        this.contentList.forEach((content: ContentDto) => {
+            let componentModule = this.applicationList.find((a: ApplicationDto) => a.applicationId == content.applicationId).module;
+
+            this.addComponentToContainer(this.dynamicComponentContainer, componentModule, JSON.parse(content.settings), index, this.currentComponents);
+        });
     }
 
     onComboChanged() {
         console.log(this.componentCombo.inputs);
         this.addComponentToContainer(this.dynamicComponentContainer, this.componentCombo.component, this.componentCombo.inputs, 19, this.currentComponents);
-    }
-
-    createShells() {
-        if (this.apps == null) {
-            return;
-        }
-        let curr: number = 0;
-        this.apps.forEach(element => {
-            this.addComponentToContainer(this.dynamicComponentContainer, element.component, element.inputs, curr, this.currentComponents);
-            curr++;
-        });
-        console.log(this.currentComponents);
-
-        //let first: ComponentRef<HelloWorldComponent> = this.currentComponents.find((x: any) => x.instance.id === 1);
-
-        //console.log(first);
-
-
-        //this.currentComponents.find((x: any) => x.instance.id === 0).instance.graphName = "hello goodbye";
-        //first.instance.balbal = "change text ayy";
     }
 
     changeOrder(vcRef: ViewContainerRef) {
@@ -88,7 +105,11 @@ export default class DynamicComponent {
         var factories = Array.from(this.resolver['_factories'].keys());
         var modelType = <Type<any>>factories.find((x: any) => x.name === componentType);
 
-        let inputProviders = Object.keys(inputs).map((inputName) => { return { provide: inputName, useValue: inputs[inputName] }; });
+        let inputProviders = Object.keys(inputs).map((inputName) => {
+            return {
+                provide: inputName, useValue: inputs[inputName]
+            };
+        });
         let resolvedInputs = ReflectiveInjector.resolve(inputProviders);
 
         // We create an injector out of the data we want to pass down and this components injector
@@ -120,7 +141,7 @@ export default class DynamicComponent {
         //Using the ComponentRef, we have access to the DOM element, ViewRef and instance.
         //This allows us to do modifications on a shown component, on-runtime.
 
-        this.renderer.setElementStyle(component.location.nativeElement, 'color', 'orange');
+        this.renderer.setElementStyle(component.location.nativeElement, 'color', 'grey');
         this.renderer.setElementClass(component.location.nativeElement, 'testClass-' + uid, true);
 
         // component.location.nativeElement.style.backgroundColor = 'yellow';

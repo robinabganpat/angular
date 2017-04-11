@@ -1,37 +1,27 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, Headers } from '@angular/http';
+import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { ContentDto } from 'models/ContentDto';
 
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/do';
+import { AppBaseService } from "services/app-base.service";
 
 @Injectable()
-export class ContentService {
-
-    constructor(private http: Http) { }
-
-    private contentsUrl = 'http://localhost:46768/api/contents'
-
-    getContents(): Observable<ContentDto[]> {
-        return this.http.get(this.contentsUrl)
-            // ...and calling .json() on the response to return data
-            .map(response => response.json())
-            //...errors if any
-            .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
-
-
+export class ContentService extends AppBaseService {
+    constructor(_http: Http) {
+        super(_http);
     }
 
-    getSimpleString(): Observable<string> {
-        return this.http.get(this.contentsUrl + "/1")
-            // ...and calling .json() on the response to return data
-            .map(response => response)
-            //...errors if any
-            .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
+    private contentsUrl = 'http://localhost:46768/api/contents';
+
+    getContents(userId: number) {
+        return super.sendGet('contents', 'GetContentsForUser?userId=' + userId);
     }
 
-
-
+    updateContent(contentDto: ContentDto): void {
+        
+    }
 }

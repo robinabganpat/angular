@@ -1,39 +1,32 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-
-//Necessary for highcharts
-import { ChartModule } from 'angular2-highcharts';
-import { HighchartsStatic } from 'angular2-highcharts/dist/HighchartsService';
-export function highchartsFactory() {
-  return require('highcharts');
-}
+// import { Http, Response, Headers, RequestOptions } from '@angular/http';
 
 import { AppComponent } from './app.component';
-import HelloWorldComponent from './hello-world/hello-world.component';
-import DynamicComponent from './dynamic/dynamic.component';
-import HlChartComponent from './hl-chart/hl-chart.component';
+import { AppRoutingModule } from './app.routing';
+
+import { NavigationModule } from "../views/common/navigation/navigation.module";
+import { FooterModule } from "../views/common/footer/footer.module";
+import { TopnavbarModule } from "../views/common/topnavbar/topnavbar.module";
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HelloWorldComponent,
-    DynamicComponent,
-    HlChartComponent
-  ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    HttpModule,
-    ChartModule
-  ],
-  providers: [
-    {
-      provide: HighchartsStatic,
-      useFactory: highchartsFactory
-    }
-  ],
-  bootstrap: [AppComponent]
+    imports: [
+        AppRoutingModule,
+        BrowserModule,
+        FormsModule,
+        HttpModule,
+
+        NavigationModule,
+        FooterModule,
+        TopnavbarModule,
+    ],
+    providers: [
+    ],
+    declarations: [
+        AppComponent,
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }

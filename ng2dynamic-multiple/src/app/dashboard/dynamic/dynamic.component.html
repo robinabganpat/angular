@@ -1,11 +1,13 @@
 <button (click)="RefreshApps()">Refresh</button>
 <button (click)="DestroyApps()">Destroy</button>
 <button (click)="ChangeOrder2()">Change order</button>
-<button (click)="ListElements()">ListElements</button>
+<!--<button (click)="ListElements()">ListElements</button>-->
 
-<select [(ngModel)]="componentCombo" (change)="onComboChanged()">
+<!--<select [(ngModel)]="componentCombo" (change)="onComboChanged()">
   <option *ngFor="let app of apps" [ngValue]="app">{{app.name}}</option>
-</select>
+</select>-->
 <div #dynamicComponentContainer></div>
 
-{{stringy}}
+<h2>{{errorMessage}}</h2>
+
+<!--{{stringy}}-->

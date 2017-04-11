@@ -1,0 +1,11 @@
+.logo {
+    padding-top: 5px;
+    height: 50px;
+}
+
+.active {
+    font-style: italic;
+}
+nav a {
+    font-size: large;
+}

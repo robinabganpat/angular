@@ -1,9 +1,10 @@
-<div style="padding: 10px;">
-    <h2>Angular2 Dynamic Components</h2>
-    <div style="float: left; width: 40%">
-        <dynamic-component [apps]="componentDataLeft"></dynamic-component>
-    </div>
-    <div style="float: right; width: 40%">
-        <dynamic-component [apps]="componentDataRight"></dynamic-component>
-    </div>
-</div>
+<img src="{{logo}}" class="logo">
+<nav>
+    <a routerLink="/home" routerLinkActive="active">Home</a>
+    <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+    <!--<a routerLink="/about" routerLinkActive="active">About (lazy)</a>
+  <a routerLink="/contacts" routerLinkActive="active">Contacts (lazy)</a>-->
+</nav>
+<hr/>
+
+<router-outlet></router-outlet>

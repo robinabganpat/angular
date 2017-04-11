@@ -1,54 +1,38 @@
-import { Component, AfterViewChecked } from '@angular/core';
-import HelloWorldComponent from './hello-world/hello-world.component';
-import HlChartComponent from './hl-chart/hl-chart.component';
+import { Component } from '@angular/core';
+import { ContentService } from "services/content.service";
+import { ApplicationService } from "services/application.service";
+// import { correctHeight, detectBody } from './app.helpers';
+
+// // Core vendor styles
+// import '../../node_modules/bootstrap/dist/css/bootstrap.min.css'
+// import '../../node_modules/font-awesome/css/font-awesome.css'
+// import '../../node_modules/animate.css/animate.min.css'
+
+// // Main Inspinia CSS files
+// import '../../src/assets/styles/style.css'
+
+// declare var jQuery: any;
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css']
+    styleUrls: ['./app.component.css'],
+    providers: [ContentService, ApplicationService]
 })
 export class AppComponent {
-    componentDataLeft: [{ name: string, component: any, inputs: any }];
-    componentDataRight: [{ name: string, component: any, inputs: any }];
+    logo = '/assets/img/hl-logo.png';
+    // ngAfterViewInit() {
+    //     // Run correctHeight function on load and resize window event
+    //     jQuery(window).bind("load resize", function () {
+    //         correctHeight();
+    //         detectBody();
+    //     });
 
-    ngOnInit() {
-        // componentData is passed to the dynamic component.
-        // Imagine fetching the list of 'contents' here, passing them to the dynamic component to render empty shells
-        // The components themselves should do a call to Web Api requesting 
-        this.componentDataLeft = [
-            {
-                name: 'hl-chart',
-                component: 'HlChartComponent',
-                inputs: {
-                    chartTitle: 'Marcieman'
-                }
-            },
-            {
-                name: 'hello-world',
-                component: 'HelloWorldComponent',
-                inputs: {
-                    balbal: "Dynamic Hello World!"
-                }
-            }
-        ]
-
-        this.componentDataRight = [
-            {
-                name: 'hello-world',
-                component: 'HelloWorldComponent',
-                inputs: {
-                    balbal: "RightHelloWorld"
-                }
-            },
-            {
-                name: 'hl-chart',
-                component: 'HlChartComponent',
-                inputs: {
-                    chartTitle: 'Tisjeboy'
-                }
-            }
-        ]
-    }
-
-    constructor() { }
+    //     // Correct height of wrapper after metisMenu animation.
+    //     jQuery('.metismenu a').click(() => {
+    //         setTimeout(() => {
+    //             correctHeight();
+    //         }, 300)
+    //     });
+    // }
 }
