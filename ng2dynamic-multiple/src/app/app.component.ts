@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+
+import { Component, AfterViewChecked } from '@angular/core';
 import { ContentService } from "services/content.service";
 import { ApplicationService } from "services/application.service";
 // import { correctHeight, detectBody } from './app.helpers';
